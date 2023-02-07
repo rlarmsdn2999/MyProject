@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+  <th:block th:fragment="content">
+    <h1 class="mt-4">예능 정보 수정 페이지</h1>
+    <form action="/enter/modify" method="post">
+      <input type="hidden" name="page" th:value="${requestDTO.page}">
+      <div class="form-group">
+        <label>제목</label>
+        <input type="text" class="form-control" name="title" th:value="${dto.title}">
+      </div>
+      <div class="form-group">
+        <label>출연진</label>
+        <input type="text" class="form-control" name="actor" th:value="${dto.actor}">
+      </div>
+      <div class="form-group">
+        <label>기본 정보</label>
+        <textarea class="form-control" rows="5" name="content">[[${dto.content}]]</textarea>
+      </div>
+      <div class="form-group">
+        <label>댓글 수</label>
+        <input type="text" class="form-control" name="title" th:value="${dto.reviewCnt}" readonly>
+      </div>
+      <div class="form-group">
+        <label>평균 평점</label>
+        <input type="text" class="form-control" name="title" th:value="${dto.avg}" readonly>
+      </div>
+      <style>
+        .uploadResult {
+          width: 100%;
+          background-color: gray;
+          margin-top: 10px;
+        }
+
+        .uploadResult ul {
+          display: flex;
+          flex-flow: row;
+          justify-content: center;
+          align-items: center;
+          vertical-align: top;
+          overflow: auto;
+        }
+
+        .uploadResult ul li {
+          list-style: none;
+          padding: 10px;
+          margin-left: 2em;
+        }
+
+        .uploadResult ul li img {
+          width: 100px;
+        }
+      </style>
+      <div class="uploadResult">
+        <ul>
+          <li th:each="enterImage: ${dto.imageDTOList}" th:data-file="${enterImage.getThumbnailURL()}">
+            <img th:if="${enterImage.path != null}"
+                 th:src="|/display?fileName=${enterImage.getThumbnailURL()}|">
+          </li>
+        </ul>
+      </div>
+    </form>
+    <button type="button" class="btn btn-primary modifyBtn">수정</button>
+    <button type="button" class="btn btn-info listBtn">목록</button>
+    <button type="button" class="btn btn-danger removeBtn">삭제</button>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script th:src="@{/js/starrr.js}"></script>
+    <link th:href="@{/css/starrr.css}" rel="stylesheet">
+    <link rel="stylesheet"
+          href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
+    <script th:inline="javascript">
+      var actionForm = $("form");
+      $(".removeBtn").click(function () {
+        actionForm
+                .attr("action", "/enter/remove")
+                .attr("method", "post");
+        actionForm.submit();
+      });
+      $(".modifyBtn").click(function () {
+        if (!confirm("수정하시겠습니까?")) {
+          return;
+        }
+        actionForm
+                .attr("action", "/enter/modify")
+                .attr("method", "post")
+                .submit();
+      });
+      $(".listBtn").click(function () {
+        var page = $("input[name='page']");
+        actionForm.empty();
+        actionForm.append(page);
+        actionForm
+                .attr("action", "/enter/list")
+                .attr("method", "get");
+        console.log(actionForm.html());
+        actionForm.submit();
+      });
+    </script>
+  </th:block>
+</th:block>
+</html>

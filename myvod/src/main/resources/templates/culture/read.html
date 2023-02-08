@@ -4,6 +4,10 @@
   <th:block th:fragment="content">
     <h1 class="mt-4">시사/교양 정보 페이지</h1>
     <div class="form-group">
+      <label>번호</label>
+      <input type="text" class="form-control" name="mno" th:value="${dto.mno}" readonly>
+    </div>
+    <div class="form-group">
       <label>제목</label>
       <input type="text" class="form-control" name="title" th:value="${dto.title}" readonly>
     </div>
@@ -17,11 +21,11 @@
     </div>
     <div class="form-group">
       <label>댓글 수</label>
-      <input type="text" class="form-control" name="title" th:value="${dto.reviewCnt}" readonly>
+      <input type="text" class="form-control" name="reviewCnt" th:value="${dto.reviewCnt}" readonly>
     </div>
     <div class="form-group">
       <label>평균 평점</label>
-      <input type="text" class="form-control" name="title" th:value="${dto.avg}" readonly>
+      <input type="text" class="form-control" name="avg" th:value="${dto.avg}" readonly>
     </div>
     <div class="reviewModal modal" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">

@@ -14,6 +14,7 @@ import org.zerock.mreview.entity.Enter;
 import org.zerock.mreview.entity.EnterImage;
 import org.zerock.mreview.entity.Movie;
 import org.zerock.mreview.entity.MovieImage;
+import org.zerock.mreview.repository.EReviewRepository;
 import org.zerock.mreview.repository.EnterImageRepository;
 import org.zerock.mreview.repository.EnterRepository;
 
@@ -28,6 +29,8 @@ import java.util.function.Function;
 public class EnterServiceImpl implements EnterService{
     private final EnterRepository enterRepository;
     private final EnterImageRepository enterImageRepository;
+    private final EReviewRepository eReviewRepository;
+
     @Transactional
     @Override
     public Long register(EnterDTO enterDTO){
@@ -43,15 +46,35 @@ public class EnterServiceImpl implements EnterService{
 
     @Override
     public PageResultDTO<EnterDTO,Object[]> getList(PageRequestDTO pageRequestDTO){
-        Pageable pageable = pageRequestDTO.getPageable(Sort.by("mno").descending());
-        Page<Object[]> result = enterRepository.getListPage(pageable);
-        Function<Object[], EnterDTO> fn=(arr->entitiesToDTO(
-                (Enter)arr[0],
-                (List<EnterImage>)(Arrays.asList((EnterImage)arr[1])),
-                (Double) arr[2],
-                (Long)arr[3]
-        ));
-        return new PageResultDTO<>(result, fn);
+        if(pageRequestDTO.getKeyword() == null) {
+            Pageable pageable = pageRequestDTO.getPageable(Sort.by("mno").descending());
+            Page<Object[]> result = enterRepository.getListPage(pageable);
+            for (Object ob : result) {
+                System.out.println(result.toString());
+            }
+            Function<Object[], EnterDTO> fn = (arr -> entitiesToDTO(
+                    (Enter) arr[0],
+                    (List<EnterImage>) (Arrays.asList((EnterImage) arr[1])),
+                    (Double) arr[2],
+                    (Long) arr[3])
+            );
+            return new PageResultDTO<>(result, fn);
+        }else{
+            Function<Object[], EnterDTO> fn = (arr -> entitiesToDTO(
+                    (Enter) arr[0],
+                    (List<EnterImage>) (Arrays.asList((EnterImage)arr[1])),
+                    (Double) arr[2],
+                    (Long)arr[3])
+            );
+            Page<Object[]> result = enterRepository.searchPage(
+                    pageRequestDTO.getKeyword(),
+                    pageRequestDTO.getPageable(Sort.by("mno").descending())
+            );
+            for (Object ob : result) {
+                System.out.println(ob.toString());
+            }
+            return new PageResultDTO<>(result, fn);
+        }
     }
 
     @Override
@@ -66,5 +89,22 @@ public class EnterServiceImpl implements EnterService{
         Double avg = (Double) result.get(0)[2];
         Long reviewCnt = (Long) result.get(0)[3];
         return entitiesToDTO(enter, enterImageList, avg, reviewCnt);
+    }
+
+    @Transactional
+    @Override
+    public void remove(Long mno){
+        enterImageRepository.deleteByMno(mno);
+        eReviewRepository.deleteByMno(mno);
+        enterRepository.deleteById(mno);
+    }
+    @Transactional
+    @Override
+    public void modify(EnterDTO enterDTO){
+        Enter enter = enterRepository.getOne(enterDTO.getMno());
+        enter.changeTitle(enterDTO.getTitle());
+        enter.changeContent(enterDTO.getContent());
+        enter.changeActor(enterDTO.getActor());
+        enterRepository.save(enter);
     }
 }

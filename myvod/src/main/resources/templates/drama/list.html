@@ -10,7 +10,19 @@
             </span>
         </h1>
         <form action="/drama/list" method="get" id="searchForm">
-            <input type="hidden" name="page" value="1">
+            <div class="input-group">
+                <input type="hidden" name="page" value="1">
+                <div class="input-group-prepend">
+                    <select class="custom-select" name="type">
+                        <option th:selected="${pageRequestDTO.type == null}">제목</option>
+                    </select>
+                </div>
+                <input class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}">
+                <div class="input-group-append" id="button-addon4">
+                    <button class="btn btn-outline-secondary btn-search" type="button">검색</button>
+                    <button class="btn btn-outline-secondary btn-clear" type="button">초기화</button>
+                </div>
+            </div>
         </form>
         <table class="table table-striped">
             <thead>
@@ -52,7 +64,13 @@
         <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
         <script th:inline="javascript">
-
+            var searchForm = $("#searchForm");
+            $('.btn-search').click(function(e){
+                searchForm.submit();
+            });
+            $('.btn-clear').click(function(e){
+                searchForm.empty().submit();
+            });
         </script>
     </th:block>
 </th:block>

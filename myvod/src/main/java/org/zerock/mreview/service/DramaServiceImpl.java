@@ -6,14 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.zerock.mreview.dto.DramaDTO;
-import org.zerock.mreview.dto.MovieDTO;
-import org.zerock.mreview.dto.PageRequestDTO;
-import org.zerock.mreview.dto.PageResultDTO;
-import org.zerock.mreview.entity.Drama;
-import org.zerock.mreview.entity.DramaImage;
-import org.zerock.mreview.entity.Movie;
-import org.zerock.mreview.entity.MovieImage;
+import org.zerock.mreview.dto.*;
+import org.zerock.mreview.entity.*;
+import org.zerock.mreview.repository.DReviewRepository;
 import org.zerock.mreview.repository.DramaImageRepository;
 import org.zerock.mreview.repository.DramaRepository;
 
@@ -30,6 +25,8 @@ import static org.zerock.mreview.entity.QMovie.movie;
 public class DramaServiceImpl implements DramaService{
     private final DramaRepository dramaRepository;
     private final DramaImageRepository dramaImageRepository;
+    private final DReviewRepository dReviewRepository;
+
     @Transactional
     @Override
     public Long register(DramaDTO dramaDTO){
@@ -45,15 +42,35 @@ public class DramaServiceImpl implements DramaService{
 
     @Override
     public PageResultDTO<DramaDTO,Object[]> getList(PageRequestDTO pageRequestDTO){
-        Pageable pageable = pageRequestDTO.getPageable(Sort.by("dno").descending());
-        Page<Object[]> result = dramaRepository.getListPage(pageable);
-        Function<Object[], DramaDTO> fn=(arr->entitiesToDTO(
-                (Drama)arr[0],
-                (List<DramaImage>)(Arrays.asList((DramaImage)arr[1])),
-                (Double) arr[2],
-                (Long)arr[3]
-        ));
-        return new PageResultDTO<>(result, fn);
+        if(pageRequestDTO.getKeyword() == null) {
+            Pageable pageable = pageRequestDTO.getPageable(Sort.by("dno").descending());
+            Page<Object[]> result = dramaRepository.getListPage(pageable);
+            for (Object ob : result) {
+                System.out.println(result.toString());
+            }
+            Function<Object[], DramaDTO> fn = (arr -> entitiesToDTO(
+                    (Drama) arr[0],
+                    (List<DramaImage>) (Arrays.asList((DramaImage) arr[1])),
+                    (Double) arr[2],
+                    (Long) arr[3])
+            );
+            return new PageResultDTO<>(result, fn);
+        }else{
+            Function<Object[], DramaDTO> fn = (arr -> entitiesToDTO(
+                    (Drama) arr[0],
+                    (List<DramaImage>) (Arrays.asList((DramaImage)arr[1])),
+                    (Double) arr[2],
+                    (Long)arr[3])
+            );
+            Page<Object[]> result = dramaRepository.searchPage(
+                    pageRequestDTO.getKeyword(),
+                    pageRequestDTO.getPageable(Sort.by("dno").descending())
+            );
+            for (Object ob : result) {
+                System.out.println(ob.toString());
+            }
+            return new PageResultDTO<>(result, fn);
+        }
     }
 
     @Override
@@ -69,5 +86,20 @@ public class DramaServiceImpl implements DramaService{
         Long reviewCnt = (Long) result.get(0)[3];
         return entitiesToDTO(drama, dramaImageList, avg, reviewCnt);
     }
-
+    @Transactional
+    @Override
+    public void remove(Long dno){
+        dramaImageRepository.deleteByDno(dno);
+        dReviewRepository.deleteByDno(dno);
+        dramaRepository.deleteById(dno);
+    }
+    @Transactional
+    @Override
+    public void modify(DramaDTO dramaDTO){
+        Drama drama = dramaRepository.getOne(dramaDTO.getDno());
+        drama.changeTitle(dramaDTO.getTitle());
+        drama.changeContent(dramaDTO.getContent());
+        drama.changeActor(dramaDTO.getActor());
+        dramaRepository.save(drama);
+    }
 }

@@ -12,6 +12,9 @@ public interface CultureService {
     Long register(CultureDTO cultureDTO);
     PageResultDTO<CultureDTO, Object[]> getList(PageRequestDTO requestDTO);
     CultureDTO getCulture(Long mno);
+    void remove(Long mno);
+
+    void modify(CultureDTO cultureDTO);
 
     default Map<String, Object> dtoToEntity(CultureDTO cultureDTO){
         Map<String, Object> entityMap = new HashMap<>();

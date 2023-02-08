@@ -41,4 +41,17 @@ public class EnterController {
         EnterDTO enterDTO = enterService.getEnter(mno);
         model.addAttribute("dto", enterDTO);
     }
+    @PostMapping("/remove")
+    public String remove(long mno, RedirectAttributes redirectAttributes){
+        enterService.remove(mno);
+        redirectAttributes.addFlashAttribute("msg", mno);
+        return "redirect:/enter/list";
+    }
+    @PostMapping("/modify")
+    public String modify(EnterDTO dto, @ModelAttribute("requestDTO") PageRequestDTO requestDTO, RedirectAttributes redirectAttributes){
+        enterService.modify(dto);
+        redirectAttributes.addAttribute("page", requestDTO.getPage());
+        redirectAttributes.addAttribute("mno", dto.getMno());
+        return "redirect:/enter/read";
+    }
 }

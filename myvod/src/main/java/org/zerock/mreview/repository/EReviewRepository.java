@@ -15,4 +15,7 @@ public interface EReviewRepository extends JpaRepository<EReview,Long> {
     @Modifying
     @Query("delete from EReview mr where mr.emember = :emember")
     void deleteByEMember(EMember emember);
+    @Modifying
+    @Query("delete  from EReview r where r.enter.mno = :mno")
+    void deleteByMno(Long mno);
 }

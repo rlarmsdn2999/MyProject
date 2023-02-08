@@ -6,14 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.zerock.mreview.dto.CultureDTO;
-import org.zerock.mreview.dto.MovieDTO;
-import org.zerock.mreview.dto.PageRequestDTO;
-import org.zerock.mreview.dto.PageResultDTO;
-import org.zerock.mreview.entity.Culture;
-import org.zerock.mreview.entity.CultureImage;
-import org.zerock.mreview.entity.Movie;
-import org.zerock.mreview.entity.MovieImage;
+import org.zerock.mreview.dto.*;
+import org.zerock.mreview.entity.*;
 import org.zerock.mreview.repository.*;
 
 import java.util.ArrayList;
@@ -27,6 +21,7 @@ import java.util.function.Function;
 public class CultureServiceImpl implements CultureService{
     private final CultureRepository cultureRepository;
     private final CultureImageRepository cultureImageRepository;
+    private final CReviewRepository cReviewRepository;
 
 
     @Transactional
@@ -44,15 +39,35 @@ public class CultureServiceImpl implements CultureService{
 
     @Override
     public PageResultDTO<CultureDTO,Object[]> getList(PageRequestDTO pageRequestDTO){
-        Pageable pageable = pageRequestDTO.getPageable(Sort.by("mno").descending());
-        Page<Object[]> result = cultureRepository.getListPage(pageable);
-        Function<Object[], CultureDTO> fn=(arr->entitiesToDTO(
-                (Culture)arr[0],
-                (List<CultureImage>)(Arrays.asList((CultureImage)arr[1])),
-                (Double) arr[2],
-                (Long)arr[3]
-        ));
-        return new PageResultDTO<>(result, fn);
+        if(pageRequestDTO.getKeyword() == null) {
+            Pageable pageable = pageRequestDTO.getPageable(Sort.by("mno").descending());
+            Page<Object[]> result = cultureRepository.getListPage(pageable);
+            for (Object ob : result) {
+                System.out.println(result.toString());
+            }
+            Function<Object[], CultureDTO> fn = (arr -> entitiesToDTO(
+                    (Culture) arr[0],
+                    (List<CultureImage>) (Arrays.asList((CultureImage) arr[1])),
+                    (Double) arr[2],
+                    (Long) arr[3])
+            );
+            return new PageResultDTO<>(result, fn);
+        }else{
+            Function<Object[], CultureDTO> fn = (arr -> entitiesToDTO(
+                    (Culture) arr[0],
+                    (List<CultureImage>) (Arrays.asList((CultureImage)arr[1])),
+                    (Double) arr[2],
+                    (Long)arr[3])
+            );
+            Page<Object[]> result = cultureRepository.searchPage(
+                    pageRequestDTO.getKeyword(),
+                    pageRequestDTO.getPageable(Sort.by("mno").descending())
+            );
+            for (Object ob : result) {
+                System.out.println(ob.toString());
+            }
+            return new PageResultDTO<>(result, fn);
+        }
     }
 
     @Override
@@ -68,5 +83,20 @@ public class CultureServiceImpl implements CultureService{
         Long reviewCnt = (Long) result.get(0)[3];
         return entitiesToDTO(culture, cultureImageList, avg, reviewCnt);
     }
-
+    @Transactional
+    @Override
+    public void remove(Long mno){
+        cultureImageRepository.deleteByMno(mno);
+        cReviewRepository.deleteByMno(mno);
+        cultureRepository.deleteById(mno);
+    }
+    @Transactional
+    @Override
+    public void modify(CultureDTO cultureDTO){
+        Culture culture = cultureRepository.getOne(cultureDTO.getMno());
+        culture.changeTitle(cultureDTO.getTitle());
+        culture.changeContent(cultureDTO.getContent());
+        culture.changeActor(cultureDTO.getActor());
+        cultureRepository.save(culture);
+    }
 }

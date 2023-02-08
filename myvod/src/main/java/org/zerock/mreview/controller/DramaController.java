@@ -40,4 +40,18 @@ public class DramaController {
         DramaDTO dramaDTO = dramaService.getDrama(dno);
         model.addAttribute("dto", dramaDTO);
     }
+
+    @PostMapping("/remove")
+    public String remove(long dno, RedirectAttributes redirectAttributes){
+        dramaService.remove(dno);
+        redirectAttributes.addFlashAttribute("msg", dno);
+        return "redirect:/drama/list";
+    }
+    @PostMapping("/modify")
+    public String modify(DramaDTO dto, @ModelAttribute("requestDTO") PageRequestDTO requestDTO, RedirectAttributes redirectAttributes){
+        dramaService.modify(dto);
+        redirectAttributes.addAttribute("page", requestDTO.getPage());
+        redirectAttributes.addAttribute("dno", dto.getDno());
+        return "redirect:/drama/read";
+    }
 }

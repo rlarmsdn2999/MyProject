@@ -6,5 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.zerock.mreview.entity.MovieImage;
 
 public interface MovieImageRepository extends JpaRepository<MovieImage, Long> {
-
+    @Modifying
+    @Query("delete  from MovieImage r where r.movie.mno = :mno")
+    void deleteByMno(Long mno);
 }

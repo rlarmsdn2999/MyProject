@@ -6,6 +6,10 @@
     <form action="/culture/modify" method="post">
       <input type="hidden" name="page" th:value="${requestDTO.page}">
       <div class="form-group">
+        <label>번호</label>
+        <input type="text" class="form-control" name="mno" th:value="${dto.mno}" readonly>
+      </div>
+      <div class="form-group">
         <label>제목</label>
         <input type="text" class="form-control" name="title" th:value="${dto.title}">
       </div>

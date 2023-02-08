@@ -15,6 +15,9 @@ public interface EnterService {
     Long register(EnterDTO enterDTO);
     PageResultDTO<EnterDTO, Object[]> getList(PageRequestDTO requestDTO);
     EnterDTO getEnter(Long mno);
+    void remove(Long mno);
+
+    void modify(EnterDTO enterDTO);
 
     default Map<String, Object> dtoToEntity(EnterDTO enterDTO){
         Map<String, Object> entityMap = new HashMap<>();

@@ -15,6 +15,9 @@ public interface DramaService {
     Long register(DramaDTO dramaDTO);
     PageResultDTO<DramaDTO, Object[]> getList(PageRequestDTO requestDTO);
     DramaDTO getDrama(Long dno);
+    void remove(Long dno);
+
+    void modify(DramaDTO dramaDTO);
 
     default Map<String, Object> dtoToEntity(DramaDTO dramaDTO){
         Map<String, Object> entityMap = new HashMap<>();

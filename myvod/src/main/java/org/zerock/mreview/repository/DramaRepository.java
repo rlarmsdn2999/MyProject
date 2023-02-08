@@ -5,10 +5,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.zerock.mreview.entity.Drama;
+import org.zerock.mreview.repository.searchRepository.SearchDramaRepository;
 
 import java.util.List;
 
-public interface DramaRepository extends JpaRepository<Drama, Long> {
+public interface DramaRepository extends JpaRepository<Drama, Long>, SearchDramaRepository {
     @Query("select m, mi, avg(coalesce(r.grade, 0)), count(distinct r) from Drama m " +
             "left outer join DramaImage mi on mi.drama = m "+
             "left outer join DReview r on r.drama = m group by m" )

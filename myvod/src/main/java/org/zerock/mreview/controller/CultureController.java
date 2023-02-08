@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.mreview.dto.CultureDTO;
 import org.zerock.mreview.dto.EnterDTO;
+import org.zerock.mreview.dto.MovieDTO;
 import org.zerock.mreview.dto.PageRequestDTO;
 import org.zerock.mreview.service.CultureService;
 
@@ -39,5 +40,18 @@ public class CultureController {
     public void read(long mno, @ModelAttribute("requestDTO") PageRequestDTO requestDTO, Model model){
         CultureDTO cultureDTO = cultureService.getCulture(mno);
         model.addAttribute("dto", cultureDTO);
+    }
+    @PostMapping("/remove")
+    public String remove(long mno, RedirectAttributes redirectAttributes){
+        cultureService.remove(mno);
+        redirectAttributes.addFlashAttribute("msg", mno);
+        return "redirect:/culture/list";
+    }
+    @PostMapping("/modify")
+    public String modify(CultureDTO dto, @ModelAttribute("requestDTO") PageRequestDTO requestDTO, RedirectAttributes redirectAttributes){
+        cultureService.modify(dto);
+        redirectAttributes.addAttribute("page", requestDTO.getPage());
+        redirectAttributes.addAttribute("mno", dto.getMno());
+        return "redirect:/culture/read";
     }
 }

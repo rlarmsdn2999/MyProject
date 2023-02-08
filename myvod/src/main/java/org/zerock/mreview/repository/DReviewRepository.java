@@ -15,4 +15,8 @@ public interface DReviewRepository extends JpaRepository<DReview, Long> {
     @Modifying
     @Query("delete from DReview mr where mr.dmember = :dmember")
     void deleteByDMember(DMember dmember);
+
+    @Modifying
+    @Query("delete  from DReview r where r.drama.dno = :dno")
+    void deleteByDno(Long dno);
 }

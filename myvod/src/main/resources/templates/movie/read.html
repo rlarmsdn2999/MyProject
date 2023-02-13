@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
   <th:block th:fragment="content">
-    <h1 class="mt-4">영화 정보 페이지</h1>
+    <h1 class="mt-4">영화 정보</h1>
     <div class="form-group">
       <label>번호</label>
       <input type="text" class="form-control" name="mno" th:value="${dto.mno}" readonly>
@@ -214,7 +214,7 @@
           reviewModal.modal('hide');
         });
         $(".closeBtn2").click(function(){
-          reviewModal.modal('hide');
+          imageModal.modal('hide');
         });
 
         $(".modifyBtn").on("click", function(){

@@ -5,6 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.zerock.mreview.entity.Movie;
 
 public interface SearchMovieRepository {
-    Page<Object[]> searchPage(String keyword, Pageable pageable);
+    Page<Object[]> searchPage( String keyword, Pageable pageable);
 
 }

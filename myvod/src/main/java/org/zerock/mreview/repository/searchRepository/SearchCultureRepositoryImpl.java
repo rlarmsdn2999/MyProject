@@ -27,7 +27,7 @@ public class SearchCultureRepositoryImpl extends QuerydslRepositorySupport imple
             query.where(culture.title.contains(keyword));
         }
         query.groupBy(culture);
-        JPQLQuery<Tuple> tupleJPQLQuery = query.select(culture, cultureImage, cReview.grade.avg(), cReview.count());
+        JPQLQuery<Tuple> tupleJPQLQuery = query.select(culture, cultureImage, cReview.grade.avg().coalesce(0.0), cReview.count());
         getQuerydsl().applyPagination(pageable, tupleJPQLQuery);
         List<Tuple> result = tupleJPQLQuery.fetch();
         long count = tupleJPQLQuery.fetchCount();

@@ -27,7 +27,7 @@ public class SearchDramaRepositoryImpl extends QuerydslRepositorySupport impleme
             query.where(drama.title.contains(keyword));
         }
         query.groupBy(drama);
-        JPQLQuery<Tuple> tupleJPQLQuery = query.select(drama, dramaImage, dReview.grade.avg(), dReview.count());
+        JPQLQuery<Tuple> tupleJPQLQuery = query.select(drama, dramaImage, dReview.grade.avg().coalesce(0.0), dReview.count());
         getQuerydsl().applyPagination(pageable, tupleJPQLQuery);
         List<Tuple> result = tupleJPQLQuery.fetch();
         long count = tupleJPQLQuery.fetchCount();

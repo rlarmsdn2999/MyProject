@@ -1,6 +1,8 @@
 package org.zerock.mreview.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +11,7 @@ import org.zerock.mreview.dto.MovieDTO;
 import org.zerock.mreview.dto.PageRequestDTO;
 import org.zerock.mreview.entity.Member;
 import org.zerock.mreview.repository.MovieRepository;
+import org.zerock.mreview.security.dto.ClubAuthMemberDTO;
 import org.zerock.mreview.service.MovieService;
 
 @Controller
@@ -19,7 +22,7 @@ public class MovieController {
     private final MovieRepository movieRepository;
 
     @GetMapping("/register")
-    public void register(){
+    public void register(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMember){
 
     }
 
@@ -36,7 +39,8 @@ public class MovieController {
     }
 
     @GetMapping({"/read", "/modify"})
-    public void read(long mno, @ModelAttribute("requestDTO") PageRequestDTO requestDTO, Model model){
+    public void read(long mno, @ModelAttribute("requestDTO") PageRequestDTO requestDTO, Model model,
+                     @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMember){
         MovieDTO movieDTO = movieService.getMovie(mno);
         model.addAttribute("dto", movieDTO);
     }
@@ -54,4 +58,7 @@ public class MovieController {
         return "redirect:/movie/read";
     }
     //https://github.com/Woongi9/MovieReviewCommunity
+    //AIzaSyBqIyCY-u1xpQ2lnz06oyZsnfFBsCtn6-4
+    //clientid = 203990318198-fkjjs7pnubior1qtqjabagiflpocn66g.apps.googleusercontent.com
+    //password = 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
 }

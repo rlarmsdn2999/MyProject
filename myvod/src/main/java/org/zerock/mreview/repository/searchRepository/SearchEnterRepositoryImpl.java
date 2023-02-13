@@ -28,7 +28,7 @@ public class SearchEnterRepositoryImpl extends QuerydslRepositorySupport impleme
             query.where(enter.title.contains(keyword));
         }
         query.groupBy(enter);
-        JPQLQuery<Tuple> tupleJPQLQuery = query.select(enter, enterImage, eReview.grade.avg(), eReview.count());
+        JPQLQuery<Tuple> tupleJPQLQuery = query.select(enter, enterImage, eReview.grade.avg().coalesce(0.0), eReview.count());
         getQuerydsl().applyPagination(pageable, tupleJPQLQuery);
         List<Tuple> result = tupleJPQLQuery.fetch();
         long count = tupleJPQLQuery.fetchCount();

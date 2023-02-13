@@ -1,14 +1,21 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content}  )}">
     <th:block th:fragment="content">
-        <h1 class="mt-4">드라마 목록 페이지
+        <h1 class="mt-4">드라마 목록
             <span>
                 <a th:href="@{/drama/register}">
                     <button type="button" class="btn btn-outline-primary">등록</button>
                 </a>
+                <a sec:authorize="isAnonymous()" th:href="@{/login}">
+            <button type="button" class="btn btn-success">로그인</button>
+        </a>
+        <a sec:authorize="isAuthenticated()" th:href="@{/logout}">
+            <button type="button" class="btn btn-danger">로그아웃</button>
+        </a>
             </span>
         </h1>
+
         <form action="/drama/list" method="get" id="searchForm">
             <div class="input-group">
                 <input type="hidden" name="page" value="1">

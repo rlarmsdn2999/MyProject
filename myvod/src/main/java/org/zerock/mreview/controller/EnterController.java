@@ -2,6 +2,8 @@ package org.zerock.mreview.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.mreview.dto.EnterDTO;
 import org.zerock.mreview.dto.MovieDTO;
 import org.zerock.mreview.dto.PageRequestDTO;
+import org.zerock.mreview.security.dto.ClubAuthMemberDTO;
 import org.zerock.mreview.service.EnterService;
 
 @Controller
@@ -19,6 +22,7 @@ import org.zerock.mreview.service.EnterService;
 @RequiredArgsConstructor
 public class EnterController {
     private final EnterService enterService;
+
     @GetMapping("/register")
     public void register(){
 
@@ -37,7 +41,8 @@ public class EnterController {
     }
 
     @GetMapping({"/read", "/modify"})
-    public void read(long mno, @ModelAttribute("requestDTO") PageRequestDTO requestDTO, Model model){
+    public void read(long mno, @ModelAttribute("requestDTO") PageRequestDTO requestDTO, Model model,
+                     @AuthenticationPrincipal ClubAuthMemberDTO clubAuthMember){
         EnterDTO enterDTO = enterService.getEnter(mno);
         model.addAttribute("dto", enterDTO);
     }

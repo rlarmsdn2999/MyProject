@@ -19,7 +19,6 @@ import org.zerock.mreview.service.MovieService;
 @RequiredArgsConstructor
 public class MovieController {
     private final MovieService movieService;
-    private final MovieRepository movieRepository;
 
     @GetMapping("/register")
     public void register(@AuthenticationPrincipal ClubAuthMemberDTO clubAuthMember){

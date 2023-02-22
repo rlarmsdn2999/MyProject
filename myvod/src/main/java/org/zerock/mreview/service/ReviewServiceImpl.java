@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository reviewRepository;
-    private final MovieImageRepository movieImageRepository;
 
     @Override
     public List<ReviewDTO> getListOfMovie(Long mno){
